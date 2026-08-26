@@ -1,0 +1,47 @@
+// =============================================================================
+// Components — buttons
+// =============================================================================
+@use 'variables' as *;
+@use 'mixins' as *;
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: $space-2;
+  padding: $space-3 $space-5;
+  border-radius: $radius-md;
+  font-size: $text-sm;
+  font-weight: $weight-bold;
+  line-height: 1;
+  text-decoration: none;
+  transition: background 0.2s ease, transform 0.1s ease, box-shadow 0.2s ease;
+
+  &:focus-visible {
+    @include focus-ring;
+  }
+
+  &:active {
+    transform: translateY(1px);
+  }
+
+  // Variants
+  &--primary {
+    background: $color-brand-primary;
+    color: #fff;
+
+    &:hover {
+      background: $color-brand-primary-hover;
+      box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35);
+    }
+  }
+
+  &--ghost {
+    background: transparent;
+    color: $color-brand-primary;
+    border: 1px solid $color-brand-primary;
+
+    &:hover {
+      background: $color-brand-primary-subtle;
+    }
+  }
+}

@@ -1,0 +1,42 @@
+// =============================================================================
+// Layout — page shell and top bar
+// =============================================================================
+@use 'variables' as *;
+@use 'mixins' as *;
+
+.layout {
+  &__shell {
+    max-width: $max-width-page;
+    margin: 0 auto;
+    padding: $space-8 $space-5 $space-16;
+  }
+}
+
+// Topbar
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: $space-4;
+  margin-bottom: $space-6;
+
+  &__brand {
+    display: flex;
+    flex-direction: column;
+    gap: $space-1;
+  }
+
+  &__eyebrow {
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    font-size: $text-xs;
+    font-weight: $weight-bold;
+    color: $color-brand-secondary;
+  }
+
+  &__title {
+    font-size: clamp(1.5rem, 3vw, 2.5rem);
+    font-weight: $weight-bold;
+    color: $color-text-default;
+  }
+}

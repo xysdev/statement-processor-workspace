@@ -1,0 +1,59 @@
+// =============================================================================
+// Components — results table
+// =============================================================================
+@use 'variables' as *;
+
+.results-table {
+  width: 100%;
+  border-collapse: collapse;
+
+  &__head {
+    th {
+      background: $color-surface-thead;
+      color: $color-brand-dark;
+      font-size: $text-sm;
+      font-weight: $weight-bold;
+      text-align: left;
+      padding: $space-3 $space-4;
+      border-bottom: 2px solid $color-border-table;
+    }
+  }
+
+  &__body {
+    tr {
+      transition: background 0.15s ease;
+
+      &:hover {
+        background: $color-surface-thead-hover;
+      }
+
+      &:last-child td {
+        border-bottom: none;
+      }
+    }
+
+    td {
+      padding: $space-3 $space-4;
+      border-bottom: 1px solid $color-border-table;
+      font-size: $text-sm;
+      color: $color-text-default;
+      vertical-align: top;
+    }
+  }
+
+  &__empty {
+    text-align: center;
+    color: $color-text-muted;
+    padding: $space-8 $space-4;
+  }
+
+  &__reason-badge {
+    display: inline-block;
+    padding: $space-1 $space-2;
+    border-radius: $radius-sm;
+    font-size: $text-xs;
+    font-weight: $weight-semibold;
+    background: $color-status-error-subtle;
+    color: $color-status-error;
+  }
+}

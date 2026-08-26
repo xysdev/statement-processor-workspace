@@ -1,0 +1,27 @@
+// =============================================================================
+// Components — loading state
+// =============================================================================
+@use 'variables' as *;
+@use 'mixins' as *;
+
+.loading {
+  display: flex;
+  align-items: center;
+  gap: $space-3;
+  color: $color-text-muted;
+  font-size: $text-sm;
+  padding: $space-8 0;
+
+  &__spinner {
+    width: 20px;
+    height: 20px;
+    border: 2px solid $color-border-light;
+    border-top-color: $color-brand-primary;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+  }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}

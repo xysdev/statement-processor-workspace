@@ -1,0 +1,26 @@
+// =============================================================================
+// Print styles
+// =============================================================================
+@use 'variables' as *;
+
+@media print {
+  body {
+    background: #fff;
+  }
+
+  .btn,
+  .topbar__actions {
+    display: none !important;
+  }
+
+  .layout__shell {
+    max-width: none;
+    padding: 0;
+  }
+
+  .panel {
+    box-shadow: none;
+    border: none;
+    padding: 0;
+  }
+}

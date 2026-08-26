@@ -1,0 +1,17 @@
+{
+  "name": "statement-processor-workspace",
+  "private": true,
+  "version": "0.1.0",
+  "workspaces": [
+    "apps/*",
+    "services/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "npm run build --workspaces --if-present",
+    "test": "npm run test --workspaces --if-present",
+    "dev:web": "npm run dev -w apps/web",
+    "dev:api": "npm run dev -w services/statement-merge"
+  },
+  "packageManager": "npm@10.8.2"
+}

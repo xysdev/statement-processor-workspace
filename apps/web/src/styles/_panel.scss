@@ -1,0 +1,26 @@
+// =============================================================================
+// Components — card panel
+// =============================================================================
+@use 'variables' as *;
+
+.panel {
+  background: $color-surface-card;
+  border: 1px solid $color-border-light;
+  border-radius: $radius-lg;
+  box-shadow: $shadow-card;
+  padding: $space-6;
+
+  &__title {
+    font-size: $text-xl;
+    font-weight: $weight-bold;
+    color: $color-brand-dark;
+    margin-bottom: $space-4;
+  }
+
+  &__summary {
+    font-size: $text-sm;
+    font-weight: $weight-semibold;
+    color: $color-text-heading;
+    margin-bottom: $space-4;
+  }
+}
