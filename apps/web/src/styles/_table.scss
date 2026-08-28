@@ -46,14 +46,4 @@
     color: $color-text-muted;
     padding: $space-8 $space-4;
   }
-
-  &__reason-badge {
-    display: inline-block;
-    padding: $space-1 $space-2;
-    border-radius: $radius-sm;
-    font-size: $text-xs;
-    font-weight: $weight-semibold;
-    background: $color-status-error-subtle;
-    color: $color-status-error;
-  }
 }

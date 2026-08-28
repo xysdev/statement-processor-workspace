@@ -16,11 +16,14 @@
     color: $color-brand-dark;
     margin-bottom: $space-4;
   }
+}
 
-  &__summary {
-    font-size: $text-sm;
-    font-weight: $weight-semibold;
-    color: $color-text-heading;
-    margin-bottom: $space-4;
-  }
+.error-state {
+  margin: 0;
+  padding: $space-4;
+  border: 1px solid $color-status-error;
+  border-radius: $radius-sm;
+  background: $color-status-error-subtle;
+  color: $color-status-error;
+  font-size: $text-sm;
 }

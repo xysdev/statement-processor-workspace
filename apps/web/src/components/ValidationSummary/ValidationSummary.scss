@@ -1,0 +1,44 @@
+@use '../../styles/variables' as *;
+
+.panel__summary {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: $space-3;
+  margin-bottom: $space-4;
+}
+
+.summary-stat {
+  display: flex;
+  flex-direction: column;
+  gap: $space-1;
+  padding: $space-3;
+  border: 1px solid $color-border-light;
+  border-radius: $radius-md;
+  background: $color-surface-page;
+
+  &__label {
+    color: $color-text-muted;
+    font-size: $text-sm;
+  }
+
+  &__value {
+    color: $color-text-heading;
+    font-size: $text-xl;
+  }
+
+  &--success {
+    border-color: $color-status-success;
+    background: $color-status-success-subtle;
+  }
+
+  &--failure {
+    border-color: $color-status-error;
+    background: $color-status-error-subtle;
+  }
+}
+
+@media (max-width: $bp-sm) {
+  .panel__summary {
+    grid-template-columns: 1fr;
+  }
+}
