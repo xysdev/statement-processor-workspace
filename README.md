@@ -75,7 +75,9 @@ It reads both project files, parses them, merges them into one `records` array, 
 ## Architecture assumptions
 - `src/app.ts` creates the Express app, defines the route, and loads the project files.
 - `src/server.ts` starts the HTTP listener; keeping startup separate makes the app easy to test.
-- The frontend keeps data orchestration in `apps/web/src/App.tsx` and colocates each component with its implementation, tests, and styles under `apps/web/src/components/`.
+- The frontend keeps page composition in `apps/web/src/App.tsx`, API access in `apps/web/src/api/`, and request/report state in `apps/web/src/hooks/`.
+- Frontend components are colocated with their implementation, tests, and styles under `apps/web/src/components/`.
+- `useRecords` manages the API request lifecycle, while `useStatementReport` derives validation results, filter counts, and filtered records.
 - The Node API performs authoritative validation, and React revalidates the received records for its UI.
 - Validation functions live in `packages/shared/src/validation.ts` so both layers use the same rules.
 - Money is converted to integer cents before balance calculations, avoiding floating-point drift.
