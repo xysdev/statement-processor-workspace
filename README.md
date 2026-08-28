@@ -48,6 +48,12 @@ npm test -w @statement/statement-merge
 npm test -w @statement/web
 ```
 
+## Continuous integration
+
+GitHub Actions runs the `CI` workflow for pull requests targeting `main` and for pushes to `main`. It installs dependencies with `npm ci`, runs all workspace tests, and builds all workspaces. The workflow is defined in `.github/workflows/ci.yml`.
+
+Automatic deployment is intentionally not configured yet because a deployment platform and target environments have not been selected.
+
 ## Input files
 
 Place the statement files here:
