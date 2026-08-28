@@ -1,0 +1,52 @@
+@use '../../styles/variables' as *;
+
+.filter-bar {
+  display: flex;
+  align-items: center;
+  gap: $space-2;
+  padding: $space-3 $space-4;
+  margin-bottom: $space-4;
+  border: 1px solid $color-border-light;
+  border-radius: $radius-md;
+  background: $color-surface-page;
+
+  &__label {
+    color: $color-text-muted;
+    font-size: $text-sm;
+    font-weight: $weight-semibold;
+    white-space: nowrap;
+  }
+
+  &__select {
+    min-width: 220px;
+    border: 1px solid $color-border-light;
+    border-radius: $radius-sm;
+    background: $color-surface-card;
+    color: $color-text-muted;
+    cursor: pointer;
+    font-size: $text-sm;
+    font-weight: $weight-semibold;
+    padding: $space-3 $space-4;
+
+    &:focus-visible {
+      outline: 2px solid $color-brand-primary;
+      outline-offset: 2px;
+    }
+  }
+}
+
+@media (max-width: $bp-sm) {
+  .filter-bar {
+    align-items: stretch;
+    flex-direction: column;
+
+    &__label {
+      white-space: normal;
+    }
+
+    &__select {
+      min-width: 0;
+      width: 100%;
+    }
+  }
+}

@@ -7,5 +7,8 @@
 @use 'panel';
 @use 'table';
 @use 'buttons';
-@use 'loading';
 @use 'print';
+@use '../components/LoadingState/LoadingState';
+@use '../components/RecordFilterSelect/RecordFilterSelect';
+@use '../components/RecordsTable/RecordsTable';
+@use '../components/ValidationSummary/ValidationSummary';

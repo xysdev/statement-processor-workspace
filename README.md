@@ -75,9 +75,11 @@ It reads both project files, parses them, merges them into one `records` array, 
 ## Architecture assumptions
 - `src/app.ts` creates the Express app, defines the route, and loads the project files.
 - `src/server.ts` starts the HTTP listener; keeping startup separate makes the app easy to test.
+- The frontend keeps data orchestration in `apps/web/src/App.tsx` and colocates each component with its implementation, tests, and styles under `apps/web/src/components/`.
 - The Node API performs authoritative validation, and React revalidates the received records for its UI.
 - Validation functions live in `packages/shared/src/validation.ts` so both layers use the same rules.
 - Money is converted to integer cents before balance calculations, avoiding floating-point drift.
-- Failed records are shown in a report table and can be exported through the browser print dialog.
+- Records are shown in a report table that can be filtered to all records, balance mismatches, or duplicate references.
+- Failed records are clearly marked, valid records are shown as valid, and the report can be exported through the browser print dialog.
 
 This repository intentionally leaves commit messages for the developer to write when ready.
