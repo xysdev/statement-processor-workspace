@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { isBalanceValid } from './index.js';
+import { isBalanceValid } from './validation';
 
 describe('isBalanceValid', () => {
   it('returns true for a valid balance calculation', () => {

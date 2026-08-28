@@ -16,11 +16,4 @@ export type ValidationIssue = {
   reason: string;
 };
 
-export const parseMoney = (value: string): number => Number.parseFloat(value);
-
-export const isBalanceValid = (startBalance: string, mutation: string, endBalance: string): boolean => {
-  const expectedEndBalance = parseMoney(startBalance) + parseMoney(mutation);
-  const actualEndBalance = parseMoney(endBalance);
-
-  return Math.abs(expectedEndBalance - actualEndBalance) <= 0.0001;
-};
+export { getFailedRecords, isBalanceValid, parseMoney } from './validation.js';
