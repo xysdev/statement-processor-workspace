@@ -55,6 +55,8 @@ GitHub Actions runs the `CI` workflow for pull requests targeting `main` and for
 
 A separate `Semgrep` workflow (`.github/workflows/semgrep.yml`) runs static application security testing (SAST) on pushes and pull requests to `main`, plus a weekly scheduled scan. It uses the free, self-contained `semgrep scan` (no Semgrep Cloud account/token required) with the `p/default`, `p/owasp-top-ten`, `p/javascript`, `p/typescript`, `p/react`, and `p/secrets` rulesets, fails the job if findings are detected, and uploads results as SARIF to GitHub's Security tab.
 
+A `SonarCloud` workflow (`.github/workflows/sonarcloud.yml`) runs code quality and additional security analysis on pushes and pull requests to `main`. It runs `npm run test:coverage` (Vitest with V8 coverage across all three workspaces) and feeds the resulting LCOV reports into the scan so SonarCloud reports real test coverage, not just static analysis. Configuration lives in `sonar-project.properties` at the repo root (organization `xysdev`, project key `xysdev_statement-processor-workspace`). The workflow requires a `SONAR_TOKEN` repository secret (a SonarCloud user token) — it does not use SonarCloud's "Automatic Analysis" mode, since that mode is mutually exclusive with CI-based analysis and must be turned off in the SonarCloud project's Analysis Method settings.
+
 Automatic deployment is intentionally not configured yet because a deployment platform and target environments have not been selected.
 
 ## Input files
