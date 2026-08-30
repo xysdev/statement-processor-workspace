@@ -16,11 +16,13 @@
     "cors": "^2.8.5",
     "csv-parse": "^7.0.2",
     "express": "^4.21.2",
-    "fast-xml-parser": "^5.11.1"
+    "fast-xml-parser": "^5.11.1",
+    "formidable": "^3.5.4"
   },
   "devDependencies": {
     "@types/cors": "^2.8.5",
     "@types/express": "^5.0.0",
+    "@types/formidable": "^3.5.1",
     "@types/supertest": "^6.0.2",
     "supertest": "^7.0.0",
     "tsx": "^4.17.0",

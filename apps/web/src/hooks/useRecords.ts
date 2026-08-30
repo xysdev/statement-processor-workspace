@@ -1,45 +1,35 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import type { StatementRecord } from '@statement/shared';
-import { fetchRecords } from '../api/records';
+import { fetchRecords, uploadStatementFiles } from '../api/records';
 
 type UseRecordsResult = {
   records: StatementRecord[];
   isLoading: boolean;
   error: string | null;
+  uploadRecords: (files: { csvFile: File; xmlFile: File }) => Promise<boolean>;
 };
 
 export function useRecords(): UseRecordsResult {
   const [records, setRecords] = useState<StatementRecord[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    let isMounted = true;
+  const uploadRecords = async (files: { csvFile: File; xmlFile: File }) => {
+    setIsLoading(true);
+    setError(null);
 
-    const loadRecords = async () => {
-      try {
-        const loadedRecords = await fetchRecords();
+    try {
+      const uploadId = await uploadStatementFiles(files);
+      setRecords(await fetchRecords(uploadId));
+      return true;
+    } catch (requestError) {
+      setRecords([]);
+      setError(requestError instanceof Error ? requestError.message : 'Unable to load records.');
+      return false;
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
-        if (isMounted) {
-          setRecords(loadedRecords);
-        }
-      } catch (requestError) {
-        if (isMounted) {
-          setError(requestError instanceof Error ? requestError.message : 'Unable to load records.');
-        }
-      } finally {
-        if (isMounted) {
-          setIsLoading(false);
-        }
-      }
-    };
-
-    void loadRecords();
-
-    return () => {
-      isMounted = false;
-    };
-  }, []);
-
-  return { records, isLoading, error };
+  return { records, isLoading, error, uploadRecords };
 }
