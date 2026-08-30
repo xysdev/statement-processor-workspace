@@ -6,15 +6,15 @@ This project follows a monorepo structure to keep the responsibilities clear:
 - `services/statement-merge` contains the Node API that accepts uploaded CSV/XML statement data, parses, merges, and validates it.
 - `packages/shared` contains the shared record contracts and pure validation functions used by both layers.
 
-## Branch workflow
-The project is structured to support a realistic multi-feature workflow such as:
+## How it works
 
-- `feature/node-merge-api`
-- `feature/react-validation-ui`
-- `feature/pdf-export`
-- `feature/unit-tests-readme`
-
-Each branch is intended to contain multiple commits so the history resembles a normal human development flow.
+1. A user uploads one bank statement `.csv` file and one `.xml` file through the frontend's upload form (`apps/web`).
+2. The files are sent to the Node API (`services/statement-merge`) as a multipart upload. The API stores them under the OS temp directory and returns an `uploadId`.
+3. The frontend then requests `GET /api/records/:uploadId`. The API reads the stored files, parses both formats, and merges them into a single list of `StatementRecord`s matched by reference number.
+4. Each record is validated using the shared rules in `packages/shared/src/validation.ts` — checking for duplicate references and balance mismatches (`startBalance + mutation !== endBalance`). Money values are parsed with `currency.js` and compared as integer cents to avoid floating-point rounding errors.
+5. The API returns the merged `records` plus a `validationIssues` array describing what failed and why.
+6. The frontend renders the records in a report table, lets the user filter by "all / balance mismatches / duplicates", and re-runs the same shared validation client-side so the UI can highlight failing rows without waiting on the API's issue list alone.
+7. The report can be exported to PDF via the browser's native print dialog.
 
 ## Local development
 
@@ -26,6 +26,7 @@ Each branch is intended to contain multiple commits so the history resembles a n
    - `npm run dev:web`
 
 The API listens on `http://localhost:3001` by default. The frontend reads its API base URL from `VITE_API_BASE_URL` (no hardcoded fallback in code); `apps/web/.env.development` provides `http://localhost:3001` as the local dev default, and `apps/web/.env.test` provides the same value for the test suite. Override it with a non-committed `apps/web/.env.local` to point at a different backend (e.g. staging).
+
 
 ## Testing and builds
 
@@ -91,9 +92,14 @@ The read response has this shape:
 - `useRecords` manages the upload request lifecycle, while `useStatementReport` derives validation results, filter counts, and filtered records.
 - The Node API performs authoritative validation, and React revalidates the received records for its UI.
 - Validation functions live in `packages/shared/src/validation.ts` so both layers use the same rules.
-- Money is converted to integer cents before balance calculations, avoiding floating-point drift.
+- Money is parsed with `currency.js` and converted to integer cents before balance calculations, avoiding floating-point drift.
+- Duplicate and mismatch issues are matched back to their source record by `recordIndex`, not by re-deriving a composite key from reference + description, since two distinct records can otherwise share the same key.
 - Records are shown in a report table that can be filtered to all records, balance mismatches, or duplicate references.
 - Failed records are clearly marked, valid records are shown as valid, and the report can be exported through the browser print dialog.
+- The frontend requires `VITE_API_BASE_URL` to be set (via `.env.development`, `.env.test`, or a non-committed `.env.local`) — there is no hardcoded fallback, so the same build can be pointed at any backend without a code change.
+- CSV parsing falls back from UTF-8 to Latin-1 decoding if replacement characters are detected, since bank-exported CSVs aren't guaranteed to be UTF-8.
+- Static analysis (Semgrep) and code quality/coverage analysis (SonarCloud) run in CI alongside the existing test/build workflow — see [Continuous integration](#continuous-integration).
+- Both deployable workspaces ship as hardened, non-root Docker images — see [Running with Docker](#running-with-docker).
 
 ## Running with Docker
 
@@ -125,5 +131,3 @@ docker run -p 8080:8080 statement-web
 ```
 
 > These Dockerfiles were authored and reviewed for correctness but could not be built/run in this environment because Docker was not available. Verify locally with the commands above before deploying.
-
-This repository intentionally leaves commit messages for the developer to write when ready.
