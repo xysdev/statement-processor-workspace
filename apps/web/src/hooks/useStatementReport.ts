@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { getFailedRecords } from '@statement/shared';
+import { getFailedRecords, type StatementRecord } from '@statement/shared';
 import { useRecords } from './useRecords';
 import type { RecordFilter } from '../types';
 
@@ -13,7 +13,7 @@ export function useStatementReport() {
     mismatch: failedRecords.filter((issue) => issue.reason === 'End balance mismatch').length,
     duplicate: failedRecords.filter((issue) => issue.reason === 'Duplicate transaction reference').length,
   };
-  const filteredRecords = useMemo(() => {
+  const filteredRecords = useMemo((): StatementRecord[] => {
     if (activeFilter === 'all') {
       return records.map((record, index) => ({ ...record, __index: index }));
     }
@@ -29,7 +29,7 @@ export function useStatementReport() {
 
     return records
       .map((record, index) => ({ ...record, __index: index }))
-      .filter((record) => failedIndexes.has(record.__index ?? -1));
+      .filter((record) => failedIndexes.has(record.__index));
   }, [activeFilter, failedRecords, records]);
 
   return {

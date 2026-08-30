@@ -57,7 +57,7 @@ describe('RecordsTable', () => {
     };
 
     render(<RecordsTable
-      records={[{ ...firstDuplicate, __index: 0 }, { ...secondDuplicate, __index: 1 }] as StatementRecord[]}
+      records={[{ ...firstDuplicate, __index: 0 }, { ...secondDuplicate, __index: 1 }] as unknown as StatementRecord[]}
       failedRecords={[{ reference: '9001', description: 'Duplicate payment', reason: 'Duplicate transaction reference', recordIndex: 1 }]}
     />);
 

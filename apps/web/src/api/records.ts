@@ -1,6 +1,12 @@
 import type { StatementRecord } from '@statement/shared';
 
-const apiBaseUrl = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:3001';
+const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
+
+if (!apiBaseUrl) {
+  throw new Error(
+    'VITE_API_BASE_URL is not set. Define it in an .env file (see .env.example) before starting the app.',
+  );
+}
 
 type RecordsResponse = {
   records: StatementRecord[];
