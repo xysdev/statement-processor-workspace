@@ -68,4 +68,41 @@ describe('useStatementReport', () => {
     await waitFor(() => expect(result.current.filteredRecords).toHaveLength(1));
     expect(result.current.filteredRecords[0].description).toBe('Duplicate transaction');
   });
+
+  it('filters only the actual duplicate record when multiple records share the same reference and description', async () => {
+    const repeatedDuplicateRecords: StatementRecord[] = [
+      {
+        reference: '2001',
+        accountNumber: 'NL01',
+        description: 'Same description',
+        startBalance: '10.00',
+        mutation: '+1.00',
+        endBalance: '11.00',
+        source: 'csv',
+      },
+      {
+        reference: '2001',
+        accountNumber: 'NL02',
+        description: 'Same description',
+        startBalance: '11.00',
+        mutation: '+1.00',
+        endBalance: '12.00',
+        source: 'xml',
+      },
+    ];
+
+    mockedFetchRecords.mockResolvedValue(repeatedDuplicateRecords);
+    const { result } = renderHook(() => useStatementReport());
+
+    await act(async () => {
+      await result.current.uploadRecords(files);
+    });
+
+    await waitFor(() => expect(result.current.isLoading).toBe(false));
+    result.current.setActiveFilter('duplicate');
+
+    await waitFor(() => expect(result.current.filteredRecords).toHaveLength(1));
+    expect(result.current.filteredRecords[0].accountNumber).toBe('NL02');
+    expect(result.current.filteredRecords[0].source).toBe('xml');
+  });
 });

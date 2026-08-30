@@ -19,12 +19,13 @@ Each branch is intended to contain multiple commits so the history resembles a n
 ## Local development
 
 1. Run `npm install` at the repo root.
-2. Start the API:
+2. Copy `apps/web/.env.example` to `apps/web/.env.local` and set `VITE_API_BASE_URL` if you need to override the default (see below).
+3. Start the API:
    - `npm run dev:api`
-3. Start the frontend:
+4. Start the frontend:
    - `npm run dev:web`
 
-The API listens on `http://localhost:3001` and the Vite frontend uses its development server URL.
+The API listens on `http://localhost:3001` by default. The frontend reads its API base URL from `VITE_API_BASE_URL` (no hardcoded fallback in code); `apps/web/.env.development` provides `http://localhost:3001` as the local dev default, and `apps/web/.env.test` provides the same value for the test suite. Override it with a non-committed `apps/web/.env.local` to point at a different backend (e.g. staging).
 
 ## Testing and builds
 

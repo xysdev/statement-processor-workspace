@@ -42,6 +42,29 @@ describe('RecordsTable', () => {
     expect(screen.getByText('End balance mismatch')).toBeTruthy();
   });
 
+  it('flags only the actual duplicate record when matching by index', () => {
+    const firstDuplicate: StatementRecord = {
+      ...validRecord,
+      reference: '9001',
+      description: 'Duplicate payment',
+      accountNumber: 'NL01',
+      source: 'csv',
+    };
+    const secondDuplicate: StatementRecord = {
+      ...firstDuplicate,
+      accountNumber: 'NL02',
+      source: 'xml',
+    };
+
+    render(<RecordsTable
+      records={[{ ...firstDuplicate, __index: 0 }, { ...secondDuplicate, __index: 1 }] as unknown as StatementRecord[]}
+      failedRecords={[{ reference: '9001', description: 'Duplicate payment', reason: 'Duplicate transaction reference', recordIndex: 1 }]}
+    />);
+
+    expect(screen.getAllByText('Duplicate transaction reference')).toHaveLength(1);
+    expect(screen.getAllByText('Duplicate payment')).toHaveLength(2);
+  });
+
   it('renders an empty state when no records match the filter', () => {
     render(<RecordsTable records={[]} failedRecords={[]} />);
 

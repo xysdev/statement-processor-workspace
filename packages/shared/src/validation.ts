@@ -1,18 +1,24 @@
+import currency from 'currency.js';
 import type { StatementRecord, ValidationIssue } from './index.js';
 
 /**
  * Converts a money value to the smallest currency unit (cents).
- * Integer arithmetic avoids the rounding errors of JavaScript floating-point
- * addition, such as 0.1 + 0.2 producing 0.30000000000000004.
+ * currency.js performs exact decimal arithmetic, so rounding stays predictable
+ * even when the input contains more than two decimal places.
  */
 export const parseMoney = (value: string | number): number => {
   // Parsers may provide whole-number XML values as numbers at runtime.
   const normalized = String(value).trim();
-  const parsed = Number(normalized);
 
-  return normalized !== '' && Number.isFinite(parsed)
-    ? Math.round(parsed * 100)
-    : Number.NaN;
+  if (normalized === '') {
+   return Number.NaN;
+  }
+
+  try {
+   return Math.round(currency(normalized).value * 100);
+  } catch {
+   return Number.NaN;
+  }
 };
 
 export const isBalanceValid = (
@@ -25,7 +31,7 @@ export const isBalanceValid = (
   const parsedEndBalance = parseMoney(endBalance);
 
   if (![parsedStartBalance, parsedMutation, parsedEndBalance].every(Number.isFinite)) {
-    return false;
+   return false;
   }
 
   // All values are integers in cents, so equality is safe and exact.
@@ -36,25 +42,27 @@ export const getFailedRecords = (records: StatementRecord[]): ValidationIssue[] 
   const seen = new Set<string>();
   const failed: ValidationIssue[] = [];
 
-  for (const record of records) {
-    if (seen.has(record.reference)) {
-      failed.push({
-        reference: record.reference,
-        description: record.description,
-        reason: 'Duplicate transaction reference',
-      });
-      continue;
-    }
+  for (const [recordIndex, record] of records.entries()) {
+   if (seen.has(record.reference)) {
+     failed.push({
+       reference: record.reference,
+       description: record.description,
+       reason: 'Duplicate transaction reference',
+       recordIndex,
+     });
+     continue;
+   }
 
-    seen.add(record.reference);
+   seen.add(record.reference);
 
-    if (!isBalanceValid(record.startBalance, record.mutation, record.endBalance)) {
-      failed.push({
-        reference: record.reference,
-        description: record.description,
-        reason: 'End balance mismatch',
-      });
-    }
+   if (!isBalanceValid(record.startBalance, record.mutation, record.endBalance)) {
+     failed.push({
+       reference: record.reference,
+       description: record.description,
+       reason: 'End balance mismatch',
+       recordIndex,
+     });
+   }
   }
 
   return failed;

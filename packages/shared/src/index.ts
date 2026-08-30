@@ -14,6 +14,7 @@ export type ValidationIssue = {
   reference: string;
   description: string;
   reason: string;
+  recordIndex?: number;
 };
 
 export { getFailedRecords, isBalanceValid, parseMoney } from './validation.js';

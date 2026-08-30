@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { getFailedRecords } from '@statement/shared';
+import { getFailedRecords, type StatementRecord } from '@statement/shared';
 import { useRecords } from './useRecords';
 import type { RecordFilter } from '../types';
 
@@ -13,21 +13,23 @@ export function useStatementReport() {
     mismatch: failedRecords.filter((issue) => issue.reason === 'End balance mismatch').length,
     duplicate: failedRecords.filter((issue) => issue.reason === 'Duplicate transaction reference').length,
   };
-  const filteredRecords = useMemo(() => {
+  const filteredRecords = useMemo((): StatementRecord[] => {
     if (activeFilter === 'all') {
-      return records;
+      return records.map((record, index) => ({ ...record, __index: index }));
     }
 
     const reason = activeFilter === 'mismatch'
       ? 'End balance mismatch'
       : 'Duplicate transaction reference';
-    const failedReferences = new Set(
+    const failedIndexes = new Set<number>(
       failedRecords
-        .filter((issue) => issue.reason === reason)
-        .map((issue) => `${issue.reference}-${issue.description}`),
+        .filter((issue) => issue.reason === reason && typeof issue.recordIndex === 'number')
+        .map((issue) => issue.recordIndex as number),
     );
 
-    return records.filter((record) => failedReferences.has(`${record.reference}-${record.description}`));
+    return records
+      .map((record, index) => ({ ...record, __index: index }))
+      .filter((record) => failedIndexes.has(record.__index));
   }, [activeFilter, failedRecords, records]);
 
   return {
