@@ -8,9 +8,13 @@
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "pretest": "npm run build",
-    "test": "vitest run --passWithNoTests"
+    "test": "vitest run --passWithNoTests",
+    "test:coverage": "vitest run --passWithNoTests --coverage"
   },
   "dependencies": {
     "currency.js": "^2.0.4"
+  },
+  "devDependencies": {
+    "@vitest/coverage-v8": "^2.1.9"
   }
 }

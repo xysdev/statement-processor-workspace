@@ -13,4 +13,11 @@ export default defineConfig({
   server: {
     port: 5173,
   },
+  test: {
+    coverage: {
+      provider: 'v8',
+      reporter: ['text', 'lcov'],
+      reportsDirectory: './coverage',
+    },
+  },
 });
