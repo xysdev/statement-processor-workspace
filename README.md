@@ -53,6 +53,8 @@ npm test -w @statement/web
 
 GitHub Actions runs the `CI` workflow for pull requests targeting `main` and for pushes to `main`. It installs dependencies with `npm ci`, runs all workspace tests, and builds all workspaces. The workflow is defined in `.github/workflows/ci.yml`.
 
+A separate `Semgrep` workflow (`.github/workflows/semgrep.yml`) runs static application security testing (SAST) on pushes and pull requests to `main`, plus a weekly scheduled scan. It uses the free, self-contained `semgrep scan` (no Semgrep Cloud account/token required) with the `p/default`, `p/owasp-top-ten`, `p/javascript`, `p/typescript`, `p/react`, and `p/secrets` rulesets, fails the job if findings are detected, and uploads results as SARIF to GitHub's Security tab.
+
 Automatic deployment is intentionally not configured yet because a deployment platform and target environments have not been selected.
 
 ## Input files
