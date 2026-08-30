@@ -15,19 +15,21 @@ export function useStatementReport() {
   };
   const filteredRecords = useMemo(() => {
     if (activeFilter === 'all') {
-      return records;
+      return records.map((record, index) => ({ ...record, __index: index }));
     }
 
     const reason = activeFilter === 'mismatch'
       ? 'End balance mismatch'
       : 'Duplicate transaction reference';
-    const failedReferences = new Set(
+    const failedIndexes = new Set<number>(
       failedRecords
-        .filter((issue) => issue.reason === reason)
-        .map((issue) => `${issue.reference}-${issue.description}`),
+        .filter((issue) => issue.reason === reason && typeof issue.recordIndex === 'number')
+        .map((issue) => issue.recordIndex as number),
     );
 
-    return records.filter((record) => failedReferences.has(`${record.reference}-${record.description}`));
+    return records
+      .map((record, index) => ({ ...record, __index: index }))
+      .filter((record) => failedIndexes.has(record.__index ?? -1));
   }, [activeFilter, failedRecords, records]);
 
   return {

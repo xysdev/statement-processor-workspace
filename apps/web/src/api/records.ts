@@ -1,5 +1,7 @@
 import type { StatementRecord } from '@statement/shared';
 
+const apiBaseUrl = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:3001';
+
 type RecordsResponse = {
   records: StatementRecord[];
 };
@@ -38,7 +40,7 @@ export async function uploadStatementFiles({ csvFile, xmlFile }: StatementFiles)
   formData.append('files', csvFile);
   formData.append('files', xmlFile);
 
-  const response = await fetch('http://localhost:3001/api/records/upload', {
+  const response = await fetch(`${apiBaseUrl}/api/records/upload`, {
     method: 'POST',
     body: formData,
   });
@@ -50,7 +52,7 @@ export async function uploadStatementFiles({ csvFile, xmlFile }: StatementFiles)
 }
 
 export async function fetchRecords(uploadId: string): Promise<StatementRecord[]> {
-  const response = await fetch(`http://localhost:3001/api/records/${encodeURIComponent(uploadId)}`);
+  const response = await fetch(`${apiBaseUrl}/api/records/${encodeURIComponent(uploadId)}`);
 
   await throwForFailedResponse(response);
 

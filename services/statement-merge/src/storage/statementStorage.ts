@@ -10,10 +10,21 @@ const uploadIdPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}
 
 const getUploadDirectory = (uploadId: string): string => {
   if (!uploadIdPattern.test(uploadId)) {
-    throw new UploadNotFoundError('Uploaded statement files were not found.');
+   throw new UploadNotFoundError('Uploaded statement files were not found.');
   }
 
   return join(uploadRoot, uploadId);
+};
+
+const readUploadText = async (filepath: string, allowLatin1Fallback = false): Promise<string> => {
+  const buffer = await readFile(filepath);
+  const utf8Text = buffer.toString('utf8');
+
+  if (!allowLatin1Fallback || !utf8Text.includes('\uFFFD')) {
+   return utf8Text;
+  }
+
+  return buffer.toString('latin1');
 };
 
 export const saveStatementUpload = async ({ csvFile, xmlFile }: StatementUploadFiles): Promise<string> => {
@@ -34,8 +45,8 @@ export const readStatementUpload = async (uploadId: string): Promise<{ csv: stri
 
   try {
     const [csv, xml] = await Promise.all([
-      readFile(join(uploadDirectory, 'records.csv'), 'utf8'),
-      readFile(join(uploadDirectory, 'records.xml'), 'utf8'),
+      readUploadText(join(uploadDirectory, 'records.csv'), true),
+      readUploadText(join(uploadDirectory, 'records.xml')),
     ]);
 
     return { csv, xml };

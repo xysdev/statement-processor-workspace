@@ -5,11 +5,18 @@ type RecordsTableProps = {
   failedRecords: ValidationIssue[];
 };
 
+type IndexedRecord = StatementRecord & { __index?: number };
+
 export function RecordsTable({ records, failedRecords }: RecordsTableProps) {
-  const getIssueForRecord = (record: StatementRecord): ValidationIssue | undefined =>
-    failedRecords.find(
+  const getIssueForRecord = (record: IndexedRecord): ValidationIssue | undefined => {
+    if (typeof record.__index === 'number') {
+      return failedRecords.find((issue) => issue.recordIndex === record.__index);
+    }
+
+    return failedRecords.find(
       (issue) => issue.reference === record.reference && issue.description === record.description,
     );
+  };
 
   return (
     <table className="results-table">
@@ -30,10 +37,10 @@ export function RecordsTable({ records, failedRecords }: RecordsTableProps) {
           </tr>
         ) : (
           records.map((record) => {
-            const issue = getIssueForRecord(record);
+            const issue = getIssueForRecord(record as IndexedRecord);
 
             return (
-              <tr key={`${record.reference}-${record.description}-${record.source}`}>
+              <tr key={`${record.reference}-${record.description}-${record.source}-${(record as IndexedRecord).__index ?? 'raw'}`}>
                 <td>{record.reference}</td>
                 <td>{record.description}</td>
                 <td>
