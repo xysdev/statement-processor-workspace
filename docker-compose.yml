@@ -1,0 +1,32 @@
+services:
+  statement-merge:
+    build:
+      context: .
+      dockerfile: services/statement-merge/Dockerfile
+    image: statement-processor/statement-merge:local
+    ports:
+      - "3001:3001"
+    read_only: true
+    tmpfs:
+      - /tmp
+    security_opt:
+      - no-new-privileges:true
+    restart: unless-stopped
+
+  web:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+      args:
+        VITE_API_BASE_URL: http://localhost:3001
+    image: statement-processor/web:local
+    ports:
+      - "8080:8080"
+    read_only: true
+    tmpfs:
+      - /tmp
+    security_opt:
+      - no-new-privileges:true
+    depends_on:
+      - statement-merge
+    restart: unless-stopped

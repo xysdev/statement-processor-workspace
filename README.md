@@ -91,4 +91,35 @@ The read response has this shape:
 - Records are shown in a report table that can be filtered to all records, balance mismatches, or duplicate references.
 - Failed records are clearly marked, valid records are shown as valid, and the report can be exported through the browser print dialog.
 
+## Running with Docker
+
+Each deployable workspace has its own multi-stage `Dockerfile` using [Chainguard Images](https://www.chainguard.dev/chainguard-images) as the base:
+
+- `services/statement-merge/Dockerfile` builds the API with `cgr.dev/chainguard/node:latest-dev` and ships it on the distroless `cgr.dev/chainguard/node:latest` runtime image (no shell, no package manager, runs as the built-in non-root `nonroot` user).
+- `apps/web/Dockerfile` builds the static frontend bundle the same way, then serves it with the hardened `cgr.dev/chainguard/nginx:latest` image, also as `nonroot`.
+
+Build and run both services together:
+
+```bash
+docker compose up --build
+```
+
+This starts:
+- the API on `http://localhost:3001`
+- the frontend on `http://localhost:8080`, built with `VITE_API_BASE_URL=http://localhost:3001` baked in at build time (see `docker-compose.yml` to change it)
+
+Both containers run with `read_only: true` and a `tmpfs` mount at `/tmp` (the API's only writable path, since uploads are stored under the OS temp directory), plus `no-new-privileges`.
+
+To build/run an individual image:
+
+```bash
+docker build -f services/statement-merge/Dockerfile -t statement-merge .
+docker run -p 3001:3001 statement-merge
+
+docker build -f apps/web/Dockerfile --build-arg VITE_API_BASE_URL=http://localhost:3001 -t statement-web .
+docker run -p 8080:8080 statement-web
+```
+
+> These Dockerfiles were authored and reviewed for correctness but could not be built/run in this environment because Docker was not available. Verify locally with the commands above before deploying.
+
 This repository intentionally leaves commit messages for the developer to write when ready.

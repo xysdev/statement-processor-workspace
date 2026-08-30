@@ -1,0 +1,11 @@
+**/node_modules
+**/dist
+**/coverage
+**/.vite
+**/*.log
+.git
+.github
+docs
+.env
+.env.local
+.env.*.local
