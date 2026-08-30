@@ -105,8 +105,8 @@ The read response has this shape:
 
 Each deployable workspace has its own multi-stage `Dockerfile` using [Chainguard Images](https://www.chainguard.dev/chainguard-images) as the base:
 
-- `services/statement-merge/Dockerfile` builds the API with `cgr.dev/chainguard/node:latest-dev` and ships it on the distroless `cgr.dev/chainguard/node:latest` runtime image (no shell, no package manager, runs as the built-in non-root `nonroot` user).
-- `apps/web/Dockerfile` builds the static frontend bundle the same way, then serves it with the hardened `cgr.dev/chainguard/nginx:latest` image, also as `nonroot`.
+- `services/statement-merge/Dockerfile` builds the API with `cgr.dev/chainguard/node:latest-dev` and ships it on the distroless `cgr.dev/chainguard/node:latest` runtime image (no shell, no package manager, runs as the built-in non-root `node` user).
+- `apps/web/Dockerfile` builds the static frontend bundle the same way, then serves it with the hardened `cgr.dev/chainguard/nginx:latest` image, which runs as the non-root `nginx` user.
 
 Build and run both services together:
 
