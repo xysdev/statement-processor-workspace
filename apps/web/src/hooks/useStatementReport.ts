@@ -4,7 +4,7 @@ import { useRecords } from './useRecords';
 import type { RecordFilter } from '../types';
 
 export function useStatementReport() {
-  const { records, isLoading, error } = useRecords();
+  const { records, isLoading, error, uploadRecords } = useRecords();
   const [activeFilter, setActiveFilter] = useState<RecordFilter>('all');
   const failedRecords = useMemo(() => getFailedRecords(records), [records]);
   const validRecordCount = records.length - failedRecords.length;
@@ -40,5 +40,6 @@ export function useStatementReport() {
     setActiveFilter,
     isLoading,
     error,
+    uploadRecords,
   };
 }

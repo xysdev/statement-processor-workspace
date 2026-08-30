@@ -1,16 +1,18 @@
 // @vitest-environment jsdom
 
-import { cleanup, renderHook, waitFor } from '@testing-library/react';
+import { act, cleanup, renderHook, waitFor } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import type { StatementRecord } from '@statement/shared';
-import { fetchRecords } from '../api/records';
+import { fetchRecords, uploadStatementFiles } from '../api/records';
 import { useRecords } from './useRecords';
 
 vi.mock('../api/records', () => ({
   fetchRecords: vi.fn(),
+  uploadStatementFiles: vi.fn(),
 }));
 
 const mockedFetchRecords = vi.mocked(fetchRecords);
+const mockedUploadStatementFiles = vi.mocked(uploadStatementFiles);
 
 afterEach(() => {
   cleanup();
@@ -29,26 +31,47 @@ const records: StatementRecord[] = [
   },
 ];
 
+const files = {
+  csvFile: new File(['csv'], 'records.csv', { type: 'text/csv' }),
+  xmlFile: new File(['xml'], 'records.xml', { type: 'text/xml' }),
+};
+
 describe('useRecords', () => {
-  it('starts loading and then returns records', async () => {
+  it('uploads files and then returns records', async () => {
+    mockedUploadStatementFiles.mockResolvedValue('upload-1');
     mockedFetchRecords.mockResolvedValue(records);
     const { result } = renderHook(() => useRecords());
 
-    expect(result.current.isLoading).toBe(true);
+    expect(result.current.isLoading).toBe(false);
     expect(result.current.records).toEqual([]);
+
+    let didUpload = false;
+    await act(async () => {
+      didUpload = await result.current.uploadRecords(files);
+    });
 
     await waitFor(() => expect(result.current.isLoading).toBe(false));
 
+    expect(didUpload).toBe(true);
     expect(result.current.records).toEqual(records);
     expect(result.current.error).toBeNull();
+    expect(mockedUploadStatementFiles).toHaveBeenCalledWith(files);
+    expect(mockedFetchRecords).toHaveBeenCalledWith('upload-1');
   });
 
   it('returns an error when loading fails', async () => {
+    mockedUploadStatementFiles.mockResolvedValue('upload-1');
     mockedFetchRecords.mockRejectedValue(new Error('API unavailable'));
     const { result } = renderHook(() => useRecords());
 
+    let didUpload = true;
+    await act(async () => {
+      didUpload = await result.current.uploadRecords(files);
+    });
+
     await waitFor(() => expect(result.current.isLoading).toBe(false));
 
+    expect(didUpload).toBe(false);
     expect(result.current.records).toEqual([]);
     expect(result.current.error).toBe('API unavailable');
   });

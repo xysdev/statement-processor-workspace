@@ -1,0 +1,41 @@
+@use '../../styles/variables' as *;
+
+.upload-panel {
+  display: grid;
+  gap: $space-4;
+  margin-bottom: $space-6;
+
+  &__title {
+    font-size: $text-lg;
+    font-weight: $weight-bold;
+    color: $color-brand-dark;
+    margin-bottom: $space-2;
+  }
+
+  &__help {
+    color: $color-text-muted;
+    font-size: $text-sm;
+    line-height: $line-height-base;
+  }
+
+  &__fields {
+    display: grid;
+    gap: $space-4;
+
+    @media (min-width: $bp-sm) {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+}
+
+.upload-field {
+  display: grid;
+  gap: $space-2;
+  color: $color-text-default;
+  font-size: $text-sm;
+  font-weight: $weight-semibold;
+
+  input {
+    font: inherit;
+  }
+}

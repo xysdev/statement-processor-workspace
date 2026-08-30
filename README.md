@@ -3,7 +3,7 @@
 This project follows a monorepo structure to keep the responsibilities clear:
 
 - `apps/web` contains the React frontend, validation report table, and browser print/PDF export action.
-- `services/statement-merge` contains the Node API that reads, parses, merges, and validates CSV/XML statement data.
+- `services/statement-merge` contains the Node API that accepts uploaded CSV/XML statement data, parses, merges, and validates it.
 - `packages/shared` contains the shared record contracts and pure validation functions used by both layers.
 
 ## Branch workflow
@@ -56,18 +56,18 @@ Automatic deployment is intentionally not configured yet because a deployment pl
 
 ## Input files
 
-Place the statement files here:
+Use the frontend upload form to select one `.csv` file and one `.xml` file. The API rejects uploads that are missing either file, include unsupported file extensions or MIME types, are empty, or exceed 1 MB per file.
 
-- `services/statement-merge/data/records.csv`
-- `services/statement-merge/data/records.xml`
-
-The API reads these files from the project and exposes them through `GET /api/records`. The React application does not need to provide file URLs.
+The sample files remain in `services/statement-merge/data/` for local examples.
 
 ## Records API
 
-The Node service exposes a single endpoint: `GET /api/records`.
+The Node service exposes two endpoints:
 
-It reads both project files, parses them, merges them into one `records` array, and validates the merged data. The response has this shape:
+- `POST /api/records/upload` accepts a multipart upload with one CSV file and one XML file in the `files` form field. It stores the files on the backend and returns an `uploadId`.
+- `GET /api/records/:uploadId` reads the stored backend upload, parses and validates it, and returns the merged records.
+
+The read response has this shape:
 
 ```json
 {
@@ -79,11 +79,11 @@ It reads both project files, parses them, merges them into one `records` array, 
 `validationIssues` contains the reference, description, and reason for each duplicate-reference or balance-mismatch record.
 
 ## Architecture assumptions
-- `src/app.ts` creates the Express app, defines the route, and loads the project files.
+- `src/app.ts` creates the Express app, defines the upload route, and applies upload security checks.
 - `src/server.ts` starts the HTTP listener; keeping startup separate makes the app easy to test.
 - The frontend keeps page composition in `apps/web/src/App.tsx`, API access in `apps/web/src/api/`, and request/report state in `apps/web/src/hooks/`.
 - Frontend components are colocated with their implementation, tests, and styles under `apps/web/src/components/`.
-- `useRecords` manages the API request lifecycle, while `useStatementReport` derives validation results, filter counts, and filtered records.
+- `useRecords` manages the upload request lifecycle, while `useStatementReport` derives validation results, filter counts, and filtered records.
 - The Node API performs authoritative validation, and React revalidates the received records for its UI.
 - Validation functions live in `packages/shared/src/validation.ts` so both layers use the same rules.
 - Money is converted to integer cents before balance calculations, avoiding floating-point drift.

@@ -24,6 +24,12 @@
     transform: translateY(1px);
   }
 
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.65;
+    transform: none;
+  }
+
   // Variants
   &--primary {
     background: $color-brand-primary;
