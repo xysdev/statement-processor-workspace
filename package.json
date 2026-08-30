@@ -10,6 +10,7 @@
   "scripts": {
     "build": "npm run build --workspaces --if-present",
     "test": "npm run test --workspaces --if-present",
+    "test:coverage": "npm run test:coverage --workspaces --if-present",
     "dev:web": "npm run dev -w apps/web",
     "dev:api": "npm run dev -w services/statement-merge"
   },
