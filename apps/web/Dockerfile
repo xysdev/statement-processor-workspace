@@ -2,6 +2,12 @@
 
 # ---- Dependencies + build (has npm/shell) ----
 FROM cgr.dev/chainguard/node:latest-dev AS build
+
+# Chainguard images default to a non-root user, but COPY writes files as root,
+# so tsc/vite cannot create their output directories. The build stage is
+# discarded and never shipped, so running it as root is safe; the runtime
+# stage below still runs unprivileged.
+USER root
 WORKDIR /app
 
 COPY package.json package-lock.json ./
